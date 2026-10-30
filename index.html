@@ -299,21 +299,6 @@
         </div>
     </div>
 
-    <!--AA分摊记账模块-->
-    <div class="section">
-        <div class="sec-title">旅行AA记账分摊</div>
-        <div id="memberList">
-            <div class="check-item"><input type="checkbox" disabled><span>小A：<span id="mA">0.00</span>元</span></div>
-            <div class="check-item"><input type="checkbox" disabled><span>小B：<span id="mB">0.00</span>元</span></div>
-        </div>
-        <div class="expense-row">
-            <input class="expense-input" id="expName" placeholder="消费名称，例：酒店">
-            <input class="expense-input" id="expMoney" placeholder="金额" type="number">
-            <button class="btn-blue" onclick="addExp()">记一笔</button>
-        </div>
-        <div class="expense-result" id="expResult">总消费：0.00元｜人均应付：0.00元</div>
-    </div>
-
 <script>
 // ==========航班倒计时==========
 function countDown(elId, targetStr){
@@ -350,23 +335,6 @@ function addPrep(){
     newDiv.innerHTML=`<input type="checkbox"><span>${val}</span>`;
     wrap.parentNode.insertBefore(newDiv,wrap);
     inp.value="";
-}
-
-// ==========AA记账分摊==========
-let totalCost=0;
-const personNum=2;
-function addExp(){
-    const nameDom=document.getElementById("expName");
-    const moneyDom=document.getElementById("expMoney");
-    const cost=parseFloat(moneyDom.value);
-    if(!nameDom.value.trim() || isNaN(cost)|| cost<=0) return;
-    totalCost += cost;
-    const per=(totalCost / personNum).toFixed(2);
-    document.getElementById("mA").innerText=per;
-    document.getElementById("mB").innerText=per;
-    document.getElementById("expResult").innerText=`总消费：${totalCost.toFixed(2)}元｜人均应付：${per}元`;
-    nameDom.value="";
-    moneyDom.value="";
 }
 </script>
 </body>
