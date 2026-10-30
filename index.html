@@ -145,7 +145,7 @@
             font-size:15px;
             cursor:pointer;
         }
-        /*AA记账分摊模块*/
+        /*单人花费记账模块*/
         .expense-row{
             display:flex;
             gap:8px;
@@ -158,12 +158,20 @@
             border-radius:8px;
             font-size:15px;
         }
+        .expense-list-item{
+            display:flex;
+            justify-content:space-between;
+            padding:8px 0;
+            border-bottom:1px solid #eeeeee;
+        }
         .expense-result{
             background:#f2f4f7;
             padding:12px;
             border-radius:10px;
             margin-top:12px;
-            font-size:15px;
+            font-size:16px;
+            font-weight:600;
+            color:#d03b3b;
         }
     </style>
 </head>
@@ -257,13 +265,9 @@
         </div>
     </div>
 
-    <!--购票提醒-->
+    <!--购票提醒（已经删掉巴黎人铁塔门票）-->
     <div class="section">
         <div class="sec-title">购票提醒</div>
-        <div class="check-item">
-            <input type="checkbox">
-            <span>巴黎人铁塔门票</span>
-        </div>
         <div class="check-item">
             <input type="checkbox">
             <span>威尼斯人综艺馆入场票</span>
@@ -299,12 +303,30 @@
         </div>
     </div>
 
+    <!--单人旅行花费记账-->
+    <div class="section">
+        <div class="sec-title">旅行花费记账</div>
+        <div id="expenseListWrap"></div>
+        <div class="expense-row">
+            <input class="expense-input" id="expName" placeholder="消费名称，例：机票、吃饭">
+            <input class="expense-input" id="expMoney" placeholder="金额" type="number">
+            <button class="btn-blue" onclick="addExpItem()">记一笔</button>
+        </div>
+        <div class="expense-result" id="expResult">总花费：0.00 元</div>
+    </div>
+
 <script>
-// ==========航班倒计时==========
-function countDown(elId, targetStr){
+// ==========航班倒计时【修复：数字传参，不会解析失败】==========
+//NX221：2026年12月6日 08:50
+const goFlight = {y:2026,m:11,d:6,h:8,mi:50};
+//MU5216：2026年12月7日 17:55
+const backFlight = {y:2026,m:11,d:7,h:17,mi:55};
+
+function countDown(elId,flight){
     const dom=document.getElementById(elId);
     function tick(){
-        const t=new Date(targetStr).getTime();
+        //month从0开始，12月=11
+        const t=new Date(flight.y,flight.m,flight.d,flight.h,flight.mi).getTime();
         const now=Date.now();
         const diff = t - now;
         if(diff <=0){
@@ -320,9 +342,8 @@ function countDown(elId, targetStr){
     tick();
     setInterval(tick,1000);
 }
-// 修改这里为你的真实航班时间
-countDown("goCount","2026‑12‑06T08:50:00");
-countDown("backCount","2026‑12‑07T17:55:00");
+countDown("goCount",goFlight);
+countDown("backCount",backFlight);
 
 // ==========出行清单添加==========
 function addPrep(){
@@ -335,6 +356,29 @@ function addPrep(){
     newDiv.innerHTML=`<input type="checkbox"><span>${val}</span>`;
     wrap.parentNode.insertBefore(newDiv,wrap);
     inp.value="";
+}
+
+// ==========单人记账逻辑==========
+let totalCost = 0;
+function addExpItem(){
+    const nameDom = document.getElementById("expName");
+    const moneyDom = document.getElementById("expMoney");
+    const cost = parseFloat(moneyDom.value);
+    const nameText = nameDom.value.trim();
+    if(!nameText || isNaN(cost)|| cost <= 0) return;
+
+    totalCost += cost;
+    //新增一条消费记录
+    const listWrap = document.getElementById("expenseListWrap");
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "expense-list-item";
+    itemDiv.innerHTML = `<span>${nameText}</span><span>¥${cost.toFixed(2)}</span>`;
+    listWrap.appendChild(itemDiv);
+
+    //更新总花费
+    document.getElementById("expResult").innerText = `总花费：${totalCost.toFixed(2)} 元`;
+    nameDom.value="";
+    moneyDom.value="";
 }
 </script>
 </body>
