@@ -112,7 +112,7 @@
             color:#007aff;
             text-decoration:none;
         }
-        /*购票提醒*/
+        /*购票提醒&出行准备*/
         .check-item{
             display:flex;
             align-items:center;
@@ -265,15 +265,15 @@
         </div>
     </div>
 
-    <!--购票提醒（已经删掉巴黎人铁塔门票）-->
+    <!--购票提醒（已删除巴黎人铁塔）-->
     <div class="section">
         <div class="sec-title">购票提醒</div>
         <div class="check-item">
-            <input type="checkbox">
+            <input type="checkbox" class="persist-check">
             <span>威尼斯人综艺馆入场票</span>
         </div>
         <div class="check-item">
-            <input type="checkbox">
+            <input type="checkbox" class="persist-check">
             <span>酒店确认订单</span>
         </div>
     </div>
@@ -282,19 +282,19 @@
     <div class="section">
         <div class="sec-title">出行准备</div>
         <div class="check-item">
-            <input type="checkbox">
+            <input type="checkbox" class="persist-check">
             <span>港澳通行证及有效签注</span>
         </div>
         <div class="check-item">
-            <input type="checkbox">
+            <input type="checkbox" class="persist-check">
             <span>转换插头</span>
         </div>
         <div class="check-item">
-            <input type="checkbox">
+            <input type="checkbox" class="persist-check">
             <span>澳门流量/电话卡</span>
         </div>
         <div class="check-item">
-            <input type="checkbox">
+            <input type="checkbox" class="persist-check">
             <span>少量澳门元现金</span>
         </div>
         <div class="prep-add-area">
@@ -316,16 +316,15 @@
     </div>
 
 <script>
-// ==========航班倒计时【修复：数字传参，不会解析失败】==========
-//NX221：2026年12月6日 08:50
+// ==========航班倒计时【修复日期解析】==========
+//NX221：2026‑12‑06 08:50，月份0=1月，11=12月
 const goFlight = {y:2026,m:11,d:6,h:8,mi:50};
-//MU5216：2026年12月7日 17:55
+//MU5216：2026‑12‑07 17:55
 const backFlight = {y:2026,m:11,d:7,h:17,mi:55};
 
 function countDown(elId,flight){
     const dom=document.getElementById(elId);
     function tick(){
-        //month从0开始，12月=11
         const t=new Date(flight.y,flight.m,flight.d,flight.h,flight.mi).getTime();
         const now=Date.now();
         const diff = t - now;
@@ -345,7 +344,34 @@ function countDown(elId,flight){
 countDown("goCount",goFlight);
 countDown("backCount",backFlight);
 
-// ==========出行清单添加==========
+
+// ==========本地存储key定义==========
+const STORAGE_KEY_CHECK = "travel_checks";
+const STORAGE_KEY_EXP = "travel_expense";
+
+// ==========复选框保存&恢复==========
+function saveCheckState(){
+    const arr = [];
+    document.querySelectorAll(".persist-check").forEach(cb=>{
+        arr.push(cb.checked);
+    });
+    localStorage.setItem(STORAGE_KEY_CHECK, JSON.stringify(arr));
+}
+function restoreCheckState(){
+    const raw = localStorage.getItem(STORAGE_KEY_CHECK);
+    if(!raw) return;
+    const arr = JSON.parse(raw);
+    const cbs = document.querySelectorAll(".persist-check");
+    arr.forEach((v,i)=>{
+        if(cbs[i]) cbs[i].checked = v;
+    });
+}
+// 监听勾选变化自动保存
+document.addEventListener("change",e=>{
+    if(e.target.classList.contains("persist-check")) saveCheckState();
+})
+
+// ==========出行准备清单（新增物品自动加入持久化）==========
 function addPrep(){
     const inp=document.getElementById("prepInput");
     const val=inp.value.trim();
@@ -353,13 +379,35 @@ function addPrep(){
     const wrap=inp.parentElement;
     const newDiv=document.createElement("div");
     newDiv.className="check-item";
-    newDiv.innerHTML=`<input type="checkbox"><span>${val}</span>`;
+    newDiv.innerHTML=`<input type="checkbox" class="persist-check"><span>${val}</span>`;
     wrap.parentNode.insertBefore(newDiv,wrap);
     inp.value="";
+    saveCheckState();
 }
 
-// ==========单人记账逻辑==========
-let totalCost = 0;
+// ==========记账：保存、恢复、新增==========
+let expenseList = [];
+function renderExpense(){
+    const wrap = document.getElementById("expenseListWrap");
+    wrap.innerHTML = "";
+    let sum = 0;
+    expenseList.forEach(item=>{
+        sum += Number(item.money);
+        const div = document.createElement("div");
+        div.className="expense-list-item";
+        div.innerHTML = `<span>${item.name}</span><span>¥${Number(item.money).toFixed(2)}</span>`;
+        wrap.appendChild(div);
+    })
+    document.getElementById("expResult").innerText = `总花费：${sum.toFixed(2)} 元`;
+}
+function saveExpense(){
+    localStorage.setItem(STORAGE_KEY_EXP, JSON.stringify(expenseList));
+}
+function restoreExpense(){
+    const raw = localStorage.getItem(STORAGE_KEY_EXP);
+    if(raw) expenseList = JSON.parse(raw);
+    renderExpense();
+}
 function addExpItem(){
     const nameDom = document.getElementById("expName");
     const moneyDom = document.getElementById("expMoney");
@@ -367,19 +415,19 @@ function addExpItem(){
     const nameText = nameDom.value.trim();
     if(!nameText || isNaN(cost)|| cost <= 0) return;
 
-    totalCost += cost;
-    //新增一条消费记录
-    const listWrap = document.getElementById("expenseListWrap");
-    const itemDiv = document.createElement("div");
-    itemDiv.className = "expense-list-item";
-    itemDiv.innerHTML = `<span>${nameText}</span><span>¥${cost.toFixed(2)}</span>`;
-    listWrap.appendChild(itemDiv);
+    expenseList.push({name:nameText, money:cost});
+    saveExpense();
+    renderExpense();
 
-    //更新总花费
-    document.getElementById("expResult").innerText = `总花费：${totalCost.toFixed(2)} 元`;
     nameDom.value="";
     moneyDom.value="";
 }
+
+// ==========页面加载完成，读取本地存储恢复数据==========
+window.addEventListener("DOMContentLoaded",()=>{
+    restoreCheckState();
+    restoreExpense();
+})
 </script>
 </body>
 </html>
