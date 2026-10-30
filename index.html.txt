@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>澳门2日游｜旅行计划网页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans‑serif;
+        }
+        body {
+            background-color: #f7f8fa;
+            color: #222;
+            padding: 20px 16px;
+            max-width:720px;
+            margin:0 auto;
+        }
+        .header-card{
+            background:#fff;
+            border-radius:18px;
+            padding:24px;
+            margin-bottom:20px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.06);
+        }
+        .header-title{
+            font-size:24px;
+            font-weight:700;
+            margin-bottom:8px;
+        }
+        .header-sub{
+            color:#666;
+            font-size:15px;
+        }
+        .section{
+            background:#ffffff;
+            border-radius:18px;
+            padding:22px;
+            margin-bottom:18px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.05);
+        }
+        .sec-title{
+            font-size:20px;
+            font-weight:600;
+            margin-bottom:16px;
+        }
+        /*航班卡片*/
+        .flight-box{
+            background:#1c1c1e;
+            color:#fff;
+            border-radius:14px;
+            padding:18px;
+            margin-bottom:14px;
+        }
+        .flight-row{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .flight-city{
+            font-size:22px;
+            font-weight:bold;
+        }
+        .flight-time-text{
+            font-size:14px;
+            color:#aaa;
+            margin-top:4px;
+        }
+        .flight-no{
+            font-size:16px;
+            margin-bottom:10px;
+            color:#ffbc42;
+        }
+        .countdown-text{
+            margin-top:12px;
+            font-size:17px;
+            color:#ffbc42;
+        }
+        /*每日行程*/
+        .day-block{
+            margin-bottom:24px;
+        }
+        .day-head{
+            font-size:18px;
+            font-weight:600;
+            margin-bottom:14px;
+            padding-bottom:8px;
+            border-bottom:1px solid #eee;
+        }
+        .place-item{
+            padding:12px 0;
+            border-bottom:1px solid #f1f1f1;
+        }
+        .place-type{
+            font-size:13px;
+            color:#888;
+            margin-bottom:4px;
+        }
+        .place-name{
+            font-size:16px;
+            font-weight:500;
+        }
+        .place-distance{
+            font-size:13px;
+            color:#777;
+            margin:4px 0;
+        }
+        .map-link{
+            font-size:14px;
+            color:#007aff;
+            text-decoration:none;
+        }
+        /*购票提醒*/
+        .check-item{
+            display:flex;
+            align-items:center;
+            padding:10px 0;
+        }
+        .check-item input{
+            width:20px;
+            height:20px;
+            margin-right:12px;
+        }
+        /*旅行打包清单*/
+        .prep-add-area{
+            display:flex;
+            gap:8px;
+            margin-top:14px;
+        }
+        .prep-input{
+            flex:1;
+            padding:10px;
+            border:1px solid #ddd;
+            border-radius:8px;
+            font-size:15px;
+        }
+        .btn-blue{
+            background:#007aff;
+            color:#fff;
+            border:none;
+            border-radius:8px;
+            padding:0 16px;
+            font-size:15px;
+            cursor:pointer;
+        }
+        /*AA记账分摊模块*/
+        .expense-row{
+            display:flex;
+            gap:8px;
+            margin:12px 0;
+        }
+        .expense-input{
+            flex:1;
+            padding:10px;
+            border:1px solid #ddd;
+            border-radius:8px;
+            font-size:15px;
+        }
+        .expense-result{
+            background:#f2f4f7;
+            padding:12px;
+            border-radius:10px;
+            margin-top:12px;
+            font-size:15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-card">
+        <div class="header-title">澳门特别行政区2日游</div>
+        <div class="header-sub">12.06‑12.07｜2天1晚 · 氹仔岛 / 路氹城</div>
+    </div>
+
+    <!--去程航班-->
+    <div class="section">
+        <div class="sec-title">航班行程</div>
+        <div class="flight-box">
+            <div class="flight-no">NX221</div>
+            <div class="flight-row">
+                <div>
+                    <div class="flight-city">杭州萧山</div>
+                    <div class="flight-time-text">08:50 4号航站楼</div>
+                </div>
+                <div>⏱ 2小时30分</div>
+                <div>
+                    <div class="flight-city">澳门</div>
+                    <div class="flight-time-text">11:20 澳门国际机场</div>
+                </div>
+            </div>
+            <div class="countdown-text" id="goCount">距离出发：计算中</div>
+        </div>
+        <div class="flight-box">
+            <div class="flight-no">MU5216</div>
+            <div class="flight-row">
+                <div>
+                    <div class="flight-city">广州白云</div>
+                    <div class="flight-time-text">17:55 T3航站楼</div>
+                </div>
+                <div>⏱ 2小时05分</div>
+                <div>
+                    <div class="flight-city">杭州萧山</div>
+                    <div class="flight-time-text">20:00 3号航站楼</div>
+                </div>
+            </div>
+            <div class="countdown-text" id="backCount">距离返程：计算中</div>
+        </div>
+    </div>
+
+    <!--Day1 12.06 周日-->
+    <div class="section">
+        <div class="sec-title">每日行程</div>
+        <div class="day-block">
+            <div class="day-head">12.06 周日</div>
+            <div class="place-item">
+                <div class="place-type">🍴吃喝</div>
+                <div class="place-name">喜莲咖啡</div>
+                <div class="place-distance">距离上一站：665米 · 8分钟</div>
+                <a class="map-link" target="_blank" href="https://www.google.com/maps/search/喜莲咖啡+澳门">查看地图</a>
+            </div>
+            <div class="place-item">
+                <div class="place-type">📍其他</div>
+                <div class="place-name">官也街</div>
+                <div class="place-distance">距离上一站：2千米 · 6分钟</div>
+                <a class="map-link" target="_blank" href="https://www.google.com/maps/search/官也街+澳门">查看地图</a>
+            </div>
+            <div class="place-item">
+                <div class="place-type">🍴吃喝</div>
+                <div class="place-name">Momokawa(澳门银河店)</div>
+                <div class="place-distance">距离上一站：1千米 · 25分钟</div>
+                <a class="map-link" target="_blank" href="https://www.google.com/maps/search/Momokawa+澳门银河店">查看地图</a>
+            </div>
+            <div class="place-item">
+                <div class="place-type">🎡游玩</div>
+                <div class="place-name">澳门巴黎人埃菲尔铁塔</div>
+                <div class="place-distance">距离上一站：1千米 ·14分钟</div>
+                <a class="map-link" target="_blank" href="https://www.google.com/maps/search/澳门巴黎人埃菲尔铁塔">查看地图</a>
+            </div>
+            <div class="place-item">
+                <div class="place-type">🎡游玩</div>
+                <div class="place-name">威尼斯人综艺馆</div>
+                <div class="place-distance">距离上一站：147千米 ·1小时52分</div>
+                <a class="map-link" target="_blank" href="https://www.google.com/maps/search/威尼斯人综艺馆+澳门">查看地图</a>
+            </div>
+            <div class="place-item">
+                <div class="place-type">🏨住宿</div>
+                <div class="place-name">广州富力丽思卡尔顿酒店</div>
+                <a class="map-link" target="_blank" href="https://www.google.com/maps/search/广州富力丽思卡尔顿酒店">查看地图</a>
+            </div>
+        </div>
+        <div class="day-block">
+            <div class="day-head">12.07 周一</div>
+            <div class="place-item">
+                <div class="place-name">广州白云机场搭乘MU5216返回杭州</div>
+            </div>
+        </div>
+    </div>
+
+    <!--购票提醒-->
+    <div class="section">
+        <div class="sec-title">购票提醒</div>
+        <div class="check-item">
+            <input type="checkbox">
+            <span>巴黎人铁塔门票</span>
+        </div>
+        <div class="check-item">
+            <input type="checkbox">
+            <span>威尼斯人综艺馆入场票</span>
+        </div>
+        <div class="check-item">
+            <input type="checkbox">
+            <span>酒店确认订单</span>
+        </div>
+    </div>
+
+    <!--出行准备清单-->
+    <div class="section">
+        <div class="sec-title">出行准备</div>
+        <div class="check-item">
+            <input type="checkbox">
+            <span>港澳通行证及有效签注</span>
+        </div>
+        <div class="check-item">
+            <input type="checkbox">
+            <span>转换插头</span>
+        </div>
+        <div class="check-item">
+            <input type="checkbox">
+            <span>澳门流量/电话卡</span>
+        </div>
+        <div class="check-item">
+            <input type="checkbox">
+            <span>少量澳门元现金</span>
+        </div>
+        <div class="prep-add-area">
+            <input class="prep-input" id="prepInput" placeholder="添加物品">
+            <button class="btn-blue" onclick="addPrep()">添加</button>
+        </div>
+    </div>
+
+    <!--AA分摊记账模块-->
+    <div class="section">
+        <div class="sec-title">旅行AA记账分摊</div>
+        <div id="memberList">
+            <div class="check-item"><input type="checkbox" disabled><span>小A：<span id="mA">0.00</span>元</span></div>
+            <div class="check-item"><input type="checkbox" disabled><span>小B：<span id="mB">0.00</span>元</span></div>
+        </div>
+        <div class="expense-row">
+            <input class="expense-input" id="expName" placeholder="消费名称，例：酒店">
+            <input class="expense-input" id="expMoney" placeholder="金额" type="number">
+            <button class="btn-blue" onclick="addExp()">记一笔</button>
+        </div>
+        <div class="expense-result" id="expResult">总消费：0.00元｜人均应付：0.00元</div>
+    </div>
+
+<script>
+// ==========航班倒计时==========
+function countDown(elId, targetStr){
+    const dom=document.getElementById(elId);
+    function tick(){
+        const t=new Date(targetStr).getTime();
+        const now=Date.now();
+        const diff = t - now;
+        if(diff <=0){
+            dom.innerText="航班时间已到";
+            return;
+        }
+        let d=Math.floor(diff/(1000*60*60*24));
+        let h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+        let m=Math.floor((diff%(1000*60*60))/(1000*60));
+        let s=Math.floor((diff%(1000*60))/1000);
+        dom.innerText=`距离出发：${d}天 ${h}:${m}:${s}`;
+    }
+    tick();
+    setInterval(tick,1000);
+}
+// 修改这里为你的真实航班时间
+countDown("goCount","2026‑12‑06T08:50:00");
+countDown("backCount","2026‑12‑07T17:55:00");
+
+// ==========出行清单添加==========
+function addPrep(){
+    const inp=document.getElementById("prepInput");
+    const val=inp.value.trim();
+    if(!val) return;
+    const wrap=inp.parentElement;
+    const newDiv=document.createElement("div");
+    newDiv.className="check-item";
+    newDiv.innerHTML=`<input type="checkbox"><span>${val}</span>`;
+    wrap.parentNode.insertBefore(newDiv,wrap);
+    inp.value="";
+}
+
+// ==========AA记账分摊==========
+let totalCost=0;
+const personNum=2;
+function addExp(){
+    const nameDom=document.getElementById("expName");
+    const moneyDom=document.getElementById("expMoney");
+    const cost=parseFloat(moneyDom.value);
+    if(!nameDom.value.trim() || isNaN(cost)|| cost<=0) return;
+    totalCost += cost;
+    const per=(totalCost / personNum).toFixed(2);
+    document.getElementById("mA").innerText=per;
+    document.getElementById("mB").innerText=per;
+    document.getElementById("expResult").innerText=`总消费：${totalCost.toFixed(2)}元｜人均应付：${per}元`;
+    nameDom.value="";
+    moneyDom.value="";
+}
+</script>
+</body>
+</html>
